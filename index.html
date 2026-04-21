@@ -3,11 +3,99 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <title>Viral Caption Creator</title>
   </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <body class="bg-neutral-50 text-neutral-900 font-sans antialiased min-h-screen selection:bg-[#ff3b5c]/30 pb-24">
+    <header class="py-12 border-b-2 border-black bg-white mb-8">
+      <div class="container mx-auto px-4 flex flex-col items-center text-center space-y-4">
+        <div class="bg-[#ff3b5c] p-3 rounded-full brutal-shadow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-display font-bold tracking-tighter uppercase">
+          Viral <span class="text-[#ff3b5c]">Caption</span> Creator
+        </h1>
+        <p class="text-xl md:text-2xl font-medium text-neutral-600 max-w-2xl">
+          Biến sản phẩm của bạn thành những caption "triệu view" trên TikTok & Reels.
+        </p>
+      </div>
+    </header>
+
+    <main class="container mx-auto px-4 max-w-5xl">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Input Section -->
+        <section class="lg:col-span-5 space-y-6">
+          <div class="bg-white border-4 border-black p-6 rounded-3xl brutal-shadow">
+            <h2 class="text-2xl font-display font-black mb-4 uppercase flex items-center gap-2">
+              <span class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">1</span>
+              Sản phẩm là gì?
+            </h2>
+            
+            <div class="space-y-4">
+              <!-- Upload Dropzone -->
+              <div id="dropzone" class="relative cursor-pointer border-4 border-dashed rounded-3xl p-12 flex flex-col items-center justify-center transition-all duration-300 border-neutral-300 hover:border-black bg-white">
+                <input type="file" id="fileInput" class="hidden" accept="image/*" />
+                <div class="bg-neutral-100 p-6 rounded-full mb-6 pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-400"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                </div>
+                <h3 class="text-2xl font-display font-bold mb-2 text-center decoration-[#ff3b5c] decoration-wavy underline-offset-4 pointer-events-none">Kéo thả ảnh vào đây</h3>
+                <p class="text-neutral-500 text-center font-medium pointer-events-none">Hoặc click để chọn / nhấn Ctrl + V để dán</p>
+              </div>
+
+              <!-- Image Preview -->
+              <div id="previewContainer" class="hidden relative rounded-3xl overflow-hidden border-4 border-black brutal-shadow aspect-video bg-neutral-200">
+                <img id="imagePreview" src="" alt="Preview" class="w-full h-full object-contain" />
+                <button id="removeImageBtn" class="absolute top-4 right-4 bg-black text-white p-2 rounded-full hover:bg-brand transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+              </div>
+
+              <div class="space-y-2">
+                <label class="block font-mono text-xs font-bold uppercase text-neutral-500 ml-1">Mô tả thêm (tùy chọn)</label>
+                <textarea id="descriptionInput" placeholder="Ví dụ: Giày Sneaker trắng basic, dễ phối đồ, đang có hot deal..." class="w-full h-32 p-4 bg-neutral-50 border-2 border-neutral-200 rounded-2xl focus:border-black focus:ring-0 outline-none transition-all font-medium resize-none"></textarea>
+              </div>
+
+              <!-- Error Alert -->
+              <div id="errorMessage" class="hidden flex items-center gap-2 text-[#ff3b5c] font-bold bg-[#ff3b5c]/10 p-3 rounded-xl border border-[#ff3b5c]/20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                <p id="errorText" class="text-sm">Có lỗi xảy ra!</p>
+              </div>
+
+              <button id="generateBtn" class="w-full py-4 rounded-2xl border-4 border-black font-display font-black text-xl uppercase tracking-tighter flex items-center justify-center gap-2 bg-[#ff3b5c] text-white brutal-shadow-hover transition-all">
+                <svg id="generateIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                <span id="generateBtnText">Tạo Caption Viral</span>
+              </button>
+            </div>
+          </div>
+
+          <button id="resetBtn" class="hidden w-full py-3 rounded-xl border-2 border-black font-display font-bold text-lg uppercase flex items-center justify-center gap-2 hover:bg-neutral-100 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+            Làm lại từ đầu
+          </button>
+        </section>
+
+        <!-- Results Section -->
+        <section class="lg:col-span-7">
+          <div class="bg-white/50 border-4 border-black border-dashed rounded-3xl p-6 min-h-[500px]">
+            <h2 class="text-2xl font-display font-black mb-6 uppercase flex items-center gap-2">
+              <span class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">2</span>
+              Gợi ý cho bạn
+            </h2>
+
+            <div id="resultsContainer" class="space-y-6">
+              <!-- Empty State -->
+              <div id="resultsEmpty" class="flex flex-col items-center justify-center py-24 text-neutral-400 space-y-4">
+                <div class="w-24 h-24 rounded-full border-4 border-neutral-100 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-20"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+                </div>
+                <p class="font-medium text-lg">Caption viral của bạn sẽ hiện ở đây!</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
 
